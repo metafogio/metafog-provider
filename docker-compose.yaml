@@ -1,0 +1,54 @@
+services:
+  metafog-model:
+    image: docker.io/metafogio/ai-search-llm:latest
+    ports:
+      - 11434:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - metafog-network
+    restart: unless-stopped
+
+  metafog-bot:
+    image: docker.io/metafogio/searxng:latest
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    ports:
+      - 11020:8080
+    networks:
+      - metafog-network
+    restart: unless-stopped
+
+  metafog-node:
+    image: docker.io/metafogio/ai-search-node:latest
+    environment:
+      - SEARXNG_API_URL=http://metafog-bot:11020
+    depends_on:
+      - metafog-bot
+      - metafog-model
+    ports:
+      - 11030:3001
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    volumes:
+      - backend-dbstore:/home/metafog/data
+      - uploads:/home/metafog/uploads
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - metafog-network
+    restart: unless-stopped
+
+networks:
+  metafog-network:
+
+volumes:
+  backend-dbstore:
+  uploads:
