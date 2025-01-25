@@ -27,7 +27,7 @@ services:
   metafog-node:
     image: docker.io/metafogio/ai-search-node:latest
     environment:
-      - SEARXNG_API_URL=http://metafog-bot:11020
+      - SEARXNG_API_URL=http://metafog-bot:8080
     depends_on:
       - metafog-bot
       - metafog-model
