@@ -28,7 +28,7 @@ services:
     image: docker.io/metafogio/ai-search-node:latest
     environment:
       - SEARXNG_API_URL=http://metafog-bot:8080
-      - METAFOG_PROVIDER_KEY=TESLACYBERTRUCK
+      - METAFOG_PROVIDER_KEY=33d40df9-8328-44e5-bd2a-bae8ce51ac65
     depends_on:
       - metafog-bot
       - metafog-model
