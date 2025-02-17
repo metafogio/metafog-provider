@@ -3,21 +3,12 @@ services:
     image: docker.io/metafogio/ai-search-llm:latest
     ports:
       - 11434:11434
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
     networks:
       - metafog-network
     restart: unless-stopped
 
   metafog-bot:
     image: docker.io/metafogio/searxng:latest
-    volumes:
-      - ./searxng:/etc/searxng:rw
     ports:
       - 11020:8080
     networks:
@@ -41,6 +32,7 @@ services:
     volumes:
       - backend-dbstore:/home/metafog/data
       - uploads:/home/metafog/uploads
+      - netbird-config:/var/lib/netbird
     extra_hosts:
       - "host.docker.internal:host-gateway"
     networks:
@@ -53,3 +45,4 @@ networks:
 volumes:
   backend-dbstore:
   uploads:
+  netbird-config:
