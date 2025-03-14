@@ -1,0 +1,40 @@
+services:
+  metafog-llm:
+    image: docker.io/metafogio/ai-search-llm:latest
+    ports:
+      - 11434:11434
+    networks:
+      - metafog-network
+    restart: unless-stopped
+
+  metafog-search:
+    image: docker.io/metafogio/searxng:latest
+    ports:
+      - 8080:8080
+    networks:
+      - metafog-network
+    restart: unless-stopped
+
+  metafog-api:
+    image: docker.io/metafogio/ai-search-api:latest
+    restart: unless-stopped
+    environment:
+      - PROVIDER_KEY=33d40df9-8328-44e5-bd2a-bae8ce51ac65
+    ports:
+      - "80:80"
+      - "443:443"
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+    depends_on:
+      - metafog-llm
+      - metafog-search
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - metafog-network
+
+networks:
+  metafog-network:
+    driver: bridge
